@@ -3,10 +3,16 @@ const LINE_WIDTH = "round";
 document.addEventListener("DOMContentLoaded", () => {
   const color = document.querySelector("#color");
   const size = document.querySelector("#size");
+  const clear = document.querySelector("#clear");
   const canvas = document.querySelector("#canvas");
   const context = canvas.getContext("2d");
   const points = [];
   let isPainting = false;
+
+  const clearCanvas = () => {
+    points.length = 0;
+    redraw();
+  };
 
   const redraw = () => {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
@@ -86,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listeners
   window.addEventListener("resize", resizeCanvas);
   size.addEventListener("input", updateSize);
+  clear.addEventListener("click", clearCanvas);
 
   canvas.addEventListener("mousedown", onPress, false);
   canvas.addEventListener("mousemove", onDrag, false);
