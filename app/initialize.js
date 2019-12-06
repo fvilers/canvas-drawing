@@ -32,6 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const resizeCanvas = () => {
+    canvas.height = canvas.clientHeight - 1; // -1 to prevent scrollbars
+    canvas.width = canvas.clientWidth;
+    redraw();
+  };
+
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
   const stopPainting = () => {
     isPainting = false;
   };
