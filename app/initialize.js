@@ -9,11 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const points = [];
   let isPainting = false;
 
-  const clearCanvas = () => {
-    points.length = 0;
-    redraw();
-  };
-
   const redraw = () => {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     context.lineJoin = LINE_WIDTH;
@@ -38,10 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const clearCanvas = () => {
+    points.length = 0;
+    window.requestAnimationFrame(redraw);
+  };
+
   const resizeCanvas = () => {
     canvas.height = canvas.clientHeight - 1; // -1 to prevent scrollbars
     canvas.width = canvas.clientWidth;
-    redraw();
+    window.requestAnimationFrame(redraw);
   };
 
   const updateSize = e => {
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const onPress = e => {
     isPainting = true;
     points.push(createPoint(e, false));
-    redraw();
+    window.requestAnimationFrame(redraw);
   };
 
   const onDrag = e => {
@@ -72,13 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isPainting) {
       points.push(createPoint(e, true));
-      redraw();
+      window.requestAnimationFrame(redraw);
     }
   };
 
   const onRelease = () => {
     isPainting = false;
-    redraw();
+    window.requestAnimationFrame(redraw);
   };
 
   const onCancel = () => {
