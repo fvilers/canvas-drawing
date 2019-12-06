@@ -13,6 +13,10 @@ body {
   padding: 1rem;
 }
 
+#toolbar {
+  margin-bottom: 1rem;
+}
+
 #canvas {
   border: 1px dashed black;
   flex-grow: 1;

@@ -1,8 +1,8 @@
-const STROKE_STYLE = "black";
 const POINT_SIZE = 2;
 const LINE_WIDTH = "round";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const color = document.getElementById("color");
   const canvas = document.querySelector("#canvas");
   const context = canvas.getContext("2d");
   const points = [];
@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const redraw = () => {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    context.strokeStyle = STROKE_STYLE;
     context.lineJoin = LINE_WIDTH;
     context.lineWidth = POINT_SIZE;
 
@@ -18,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     for (const point of points) {
       context.beginPath();
+      context.strokeStyle = point.color;
 
       if (point.dragging && previousPoint) {
         context.moveTo(previousPoint.x, previousPoint.y);
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const y = e.pageY - canvas.offsetTop;
 
     isPainting = true;
-    points.push({ x, y, dragging: false });
+    points.push({ x, y, color: color.value, dragging: false });
     redraw();
   });
   canvas.addEventListener("mousemove", e => {
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const x = e.pageX - canvas.offsetLeft;
       const y = e.pageY - canvas.offsetTop;
 
-      points.push({ x, y, dragging: true });
+      points.push({ x, y, color: color.value, dragging: true });
       redraw();
     }
   });
