@@ -38,49 +38,62 @@ document.addEventListener("DOMContentLoaded", () => {
     redraw();
   };
 
-  resizeCanvas();
-  window.addEventListener("resize", resizeCanvas);
-
-  const stopPainting = () => {
-    isPainting = false;
-  };
-
   const updateSize = e => {
     size.nextSibling.textContent = `${size.value} px`;
   };
 
-  updateSize();
-  size.addEventListener("input", updateSize);
+  const createPoint = (e, dragging) => {
+    const x = (e.touches ? e.touches[0] : e).pageX - canvas.offsetLeft;
+    const y = (e.touches ? e.touches[0] : e).pageY - canvas.offsetTop;
 
-  canvas.addEventListener("mousedown", e => {
-    const x = e.pageX - canvas.offsetLeft;
-    const y = e.pageY - canvas.offsetTop;
-
-    isPainting = true;
-    points.push({
+    return {
       x,
       y,
       color: color.value,
       size: size.value,
-      dragging: false
-    });
-    redraw();
-  });
-  canvas.addEventListener("mousemove", e => {
-    if (isPainting) {
-      const x = e.pageX - canvas.offsetLeft;
-      const y = e.pageY - canvas.offsetTop;
+      dragging
+    };
+  };
 
-      points.push({
-        x,
-        y,
-        color: color.value,
-        size: size.value,
-        dragging: true
-      });
+  const onPress = e => {
+    isPainting = true;
+    points.push(createPoint(e, false));
+    redraw();
+  };
+
+  const onDrag = e => {
+    e.preventDefault();
+
+    if (isPainting) {
+      points.push(createPoint(e, true));
       redraw();
     }
-  });
-  canvas.addEventListener("mouseup", stopPainting);
-  canvas.addEventListener("mouseleave", stopPainting);
+  };
+
+  const onRelease = () => {
+    isPainting = false;
+    redraw();
+  };
+
+  const onCancel = () => {
+    isPainting = false;
+  };
+
+  // Init
+  resizeCanvas();
+  updateSize();
+
+  // Event listeners
+  window.addEventListener("resize", resizeCanvas);
+  size.addEventListener("input", updateSize);
+
+  canvas.addEventListener("mousedown", onPress, false);
+  canvas.addEventListener("mousemove", onDrag, false);
+  canvas.addEventListener("mouseup", onRelease, false);
+  canvas.addEventListener("mouseout", onCancel, false);
+
+  canvas.addEventListener("touchstart", onPress, false);
+  canvas.addEventListener("touchmove", onDrag, false);
+  canvas.addEventListener("touchend", onRelease, false);
+  canvas.addEventListener("touchcancel", onCancel, false);
 });
