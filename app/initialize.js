@@ -16,40 +16,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let previousPoint = null;
 
-    for (var i = 0; i < points.length; i++) {
-      const point = points[i];
+    for (const point of points) {
+      context.beginPath();
 
       if (point.dragging && previousPoint) {
-        context.beginPath();
         context.moveTo(previousPoint.x, previousPoint.y);
-        context.lineTo(point.x, point.y);
-        context.closePath();
-        context.stroke();
       } else {
-        context.fillRect(point.x, point.y, POINT_SIZE, POINT_SIZE);
+        context.moveTo(point.x - 1, point.y);
       }
 
+      context.lineTo(point.x, point.y);
+      context.closePath();
+      context.stroke();
       previousPoint = point;
     }
-  };
-
-  const handlePoint = e => {
-    const x = e.pageX - canvas.offsetLeft;
-    const y = e.pageY - canvas.offsetTop;
-
-    isPainting = true;
-    points.push({ x, y });
-    redraw();
   };
 
   const stopPainting = () => {
     isPainting = false;
   };
 
-  canvas.addEventListener("mousedown", handlePoint);
+  canvas.addEventListener("mousedown", e => {
+    const x = e.pageX - canvas.offsetLeft;
+    const y = e.pageY - canvas.offsetTop;
+
+    isPainting = true;
+    points.push({ x, y, dragging: false });
+    redraw();
+  });
   canvas.addEventListener("mousemove", e => {
     if (isPainting) {
-      handlePoint(e);
+      const x = e.pageX - canvas.offsetLeft;
+      const y = e.pageY - canvas.offsetTop;
+
+      points.push({ x, y, dragging: true });
+      redraw();
     }
   });
   canvas.addEventListener("mouseup", stopPainting);
