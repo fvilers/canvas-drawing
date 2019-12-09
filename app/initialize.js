@@ -1,11 +1,11 @@
-const LINE_WIDTH = "round";
+const LINE_WIDTH = 'round';
 
-document.addEventListener("DOMContentLoaded", () => {
-  const color = document.querySelector("#color");
-  const size = document.querySelector("#size");
-  const clear = document.querySelector("#clear");
-  const canvas = document.querySelector("#canvas");
-  const context = canvas.getContext("2d");
+document.addEventListener('DOMContentLoaded', () => {
+  const color = document.querySelector('#color');
+  const size = document.querySelector('#size');
+  const clear = document.querySelector('#clear');
+  const canvas = document.querySelector('#canvas');
+  const context = canvas.getContext('2d');
   const points = [];
   let isPainting = false;
 
@@ -62,9 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const onPress = e => {
-    isPainting = true;
-    points.push(createPoint(e, false));
-    window.requestAnimationFrame(redraw);
+    if (e.button === undefined || e.button === 0) {
+      isPainting = true;
+      points.push(createPoint(e, false));
+      window.requestAnimationFrame(redraw);
+    }
   };
 
   const onDrag = e => {
@@ -90,17 +92,17 @@ document.addEventListener("DOMContentLoaded", () => {
   updateSize();
 
   // Event listeners
-  window.addEventListener("resize", resizeCanvas);
-  size.addEventListener("input", updateSize);
-  clear.addEventListener("click", clearCanvas);
+  window.addEventListener('resize', resizeCanvas);
+  size.addEventListener('input', updateSize);
+  clear.addEventListener('click', clearCanvas);
 
-  canvas.addEventListener("mousedown", onPress, false);
-  canvas.addEventListener("mousemove", onDrag, false);
-  canvas.addEventListener("mouseup", onRelease, false);
-  canvas.addEventListener("mouseout", onCancel, false);
+  canvas.addEventListener('mousedown', onPress, false);
+  canvas.addEventListener('mousemove', onDrag, false);
+  canvas.addEventListener('mouseup', onRelease, false);
+  canvas.addEventListener('mouseout', onCancel, false);
 
-  canvas.addEventListener("touchstart", onPress, false);
-  canvas.addEventListener("touchmove", onDrag, false);
-  canvas.addEventListener("touchend", onRelease, false);
-  canvas.addEventListener("touchcancel", onCancel, false);
+  canvas.addEventListener('touchstart', onPress, false);
+  canvas.addEventListener('touchmove', onDrag, false);
+  canvas.addEventListener('touchend', onRelease, false);
+  canvas.addEventListener('touchcancel', onCancel, false);
 });
