@@ -109,6 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const onDrag = e => {
+    e.preventDefault();
+
     if (isPainting) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(memoryCanvas, 0, 0);
