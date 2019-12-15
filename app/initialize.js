@@ -19,51 +19,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const points = [];
   let isPainting = false;
 
-  context.lineJoin = "round";
-  context.lineCap = "round";
-  context.lineWidth = 20;
-
   const redraw = () => {
-    context.lineJoin = "round";
+    if (!points.length) {
+      return;
+    }
+
     context.lineCap = "round";
+    context.lineJoin = "round";
     context.lineWidth = size.value;
-
-    if (points.length === 0) {
-      return;
-    }
-
-    // draw a basic circle instead
-    if (points.length < 6) {
-      const point = points[0];
-      context.beginPath(),
-        context.arc(
-          point.x,
-          point.y,
-          context.lineWidth / 2,
-          0,
-          Math.PI * 2,
-          !0
-        ),
-        context.closePath(),
-        context.fill();
-      return;
-    }
+    context.strokeStyle = color.value;
     context.beginPath();
     context.moveTo(points[0].x, points[0].y);
 
-    // draw a bunch of quadratics, using the average of two points as the control point
-    let i;
-    for (i = 1; i < points.length - 2; i++) {
-      const c = (points[i].x + points[i + 1].x) / 2,
-        d = (points[i].y + points[i + 1].y) / 2;
-      context.quadraticCurveTo(points[i].x, points[i].y, c, d);
+    for (let i = 0; i < points.length - 1; i++) {
+      const point = points[i];
+      const nextPoint = points[i + 1];
+      const x = (point.x + nextPoint.x) / 2;
+      const y = (point.y + nextPoint.y) / 2;
+
+      context.quadraticCurveTo(point.x, point.y, x, y);
     }
-    context.quadraticCurveTo(
-      points[i].x,
-      points[i].y,
-      points[i + 1].x,
-      points[i + 1].y
-    );
+
     context.stroke();
   };
 
@@ -88,17 +64,11 @@ document.addEventListener("DOMContentLoaded", () => {
     size.nextSibling.textContent = `${size.value} px`;
   };
 
-  const createPoint = (e, dragging) => {
+  const createPoint = e => {
     const x = (e.touches ? e.touches[0] : e).pageX - canvas.offsetLeft;
     const y = (e.touches ? e.touches[0] : e).pageY - canvas.offsetTop;
 
-    return {
-      x,
-      y,
-      color: color.value,
-      size: size.value,
-      dragging
-    };
+    return { x, y };
   };
 
   const onPress = e => {
@@ -119,8 +89,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const onRelease = () => {
+  const onRelease = e => {
     if (isPainting) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(memoryCanvas, 0, 0);
+      points.push(createPoint(e, true));
+      redraw();
+
       isPainting = false;
       memoryContext.clearRect(0, 0, memoryCanvas.width, memoryCanvas.height);
       memoryContext.drawImage(canvas, 0, 0);
@@ -147,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.addEventListener("mousedown", onPress, false);
   canvas.addEventListener("mousemove", onDrag, false);
   canvas.addEventListener("mouseup", onRelease, false);
-  // canvas.addEventListener("mouseout", onCancel, false);
+  canvas.addEventListener("mouseout", onCancel, false);
 
   canvas.addEventListener("touchstart", onPress, false);
   canvas.addEventListener("touchmove", onDrag, false);
