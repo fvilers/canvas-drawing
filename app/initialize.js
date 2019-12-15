@@ -65,8 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const createPoint = e => {
-    const x = (e.touches ? e.touches[0] : e).pageX - canvas.offsetLeft;
-    const y = (e.touches ? e.touches[0] : e).pageY - canvas.offsetTop;
+    const event = e.touches && e.touches.length ? e.touches[0] : e;
+    const x = event.pageX - canvas.offsetLeft;
+    const y = event.pageY - canvas.offsetTop;
 
     return { x, y };
   };
@@ -74,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const onPress = e => {
     if (e.button === undefined || e.button === 0) {
       isPainting = true;
-      points.push(createPoint(e, false));
+      points.push(createPoint(e));
     }
   };
 
@@ -84,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isPainting) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(memoryCanvas, 0, 0);
-      points.push(createPoint(e, true));
+      points.push(createPoint(e));
       redraw();
     }
   };
@@ -93,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isPainting) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(memoryCanvas, 0, 0);
-      points.push(createPoint(e, true));
+      points.push(createPoint(e));
       redraw();
 
       isPainting = false;
